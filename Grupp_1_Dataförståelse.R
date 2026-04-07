@@ -9,6 +9,8 @@ usethis::use_git_config(user.name="emanuelssonlinnea-rgb", user.email="emanuelss
 
 raw_data <- read_csv("ecommerce_orders.csv")
 
+
+
 # visa datasetets storlek 
 glimpse(raw_data)
 
@@ -129,3 +131,12 @@ ggplot(plot_data, aes(
   )
 
 # beskriva kort vilka delar av datan som verkar viktigast för er analys 
+# baserat på dem frågeställningarna vi valt: 
+# Vilka produktkategorier verkar driva högst försäljning?
+# Finns det tecken på att längre leveranstid hänger ihop med fler returer?
+# egen frågeställning: Hur skiljer sig kundtyper bland olika kundsegment?
+# viktigaste delar av datan är då: 
+# customer_segment, customer_type, product_category, product_subcategory, 
+# quantity, unit_price, shipping_days, returned
+# mindre viktiga men intressant för jämförelse: region, city
+
