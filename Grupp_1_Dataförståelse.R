@@ -3,8 +3,8 @@
 
 library(tidyverse)
 library(scales)
-install.packages("usethis")
-usethis::use_git_config(user.name="emanuelssonlinnea-rgb", user.email="emanuelsson.linnea@gmail.com")
+#install.packages("usethis")
+#usethis::use_git_config(user.name="emanuelssonlinnea-rgb", user.email="emanuelsson.linnea@gmail.com")
 
 
 raw_data <- read_csv("ecommerce_orders.csv")
