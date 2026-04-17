@@ -73,7 +73,7 @@ Det finns vissa saknade värden i den råa datan. Dessa hanterades i datastädni
 Inför analysen städades alla relevant variabler och flera nya skapades för att underlätta tolkning och själva analysen.
 
 Det viktigaste förberedelserna var: \
-- textvärden standardiserades \
+\* texture standardiserades \
 - datum omvandlades till datumformat \
 - saknade värden hanterades \
 - nya variabler skapades\
