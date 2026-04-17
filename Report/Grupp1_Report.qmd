@@ -72,14 +72,14 @@ Det finns vissa saknade värden i den råa datan. Dessa hanterades i datastädni
 
 Inför analysen städades alla relevant variabler och flera nya skapades för att underlätta tolkning och själva analysen.
 
-Det viktigaste förberedelserna var: \
-\* texture standardiserades \
-- datum omvandlades till datumformat \
-- saknade värden hanterades \
+Det viktigaste förberedelserna var:\
+\* texture standardiserades\
+- datum omvandlades till datumformat\
+- saknade värden hanterades\
 - nya variabler skapades\
-Det nya variablerna är: \
-- order_value : ordervärde efter rabatt \
-- shipping_group : grupperad leveranstid \
+Det nya variablerna är:\
+- order_value : ordervärde efter rabatt\
+- shipping_group : grupperad leveranstid\
 - discount_group : grupperad rabattnivå
 
 ```{r}
@@ -114,7 +114,7 @@ Figuren visar tydligt att Electronics står för den klart högsta totala förs�
 
 Detta tyder på att Electronics är företagets viktigaste försäljningsdrivare. För företaget är detta relevant i beslut om sortiment, lager och marknadsförings planer. Det kategorier som ligger lägre kan antingen ha lägre efterfrågan eller vara områden där företaget har utvecklingspotential.
 
-2.  Finns det tecken på att längre leveranstid hänger ihop med fler returer? \
+2.  Finns det tecken på att längre leveranstid hänger ihop med fler returer?\
     För att undersöka detta jämfördes leveranstid mellan returnerade och icke returnerade beställningar, både genom sammanfattande statistik och genom visualisering.
 
 ```{r}
@@ -139,7 +139,7 @@ ggplot(sales_clean, aes(
 
 Den visuella skillnaden mellan grupperna är inte speciellt stor, men den statistiska analysen visar att returnerade beställningar i genomsnitt verkar ha något längre leveranstid än beställningar som inte returneras. Det finns alltså tecken på ett samband mellan längre leveranstid och fler returer. Samtidigt bör resultatet tolkas försiktigt. Analysen visar ett samband, men inte att leveranstid i sig orsakar returer. Andra faktorer som till exempel produktkategori eller kundförväntningar kan också spela roll.
 
-3.  Hur skiljer sig kundtyper mellan olika kundsegment? \
+3.  Hur skiljer sig kundtyper mellan olika kundsegment?\
     Här analyserades hur kundtyperna New, Returning och VIP fördelar sig inom olika segment.
 
 ```{r}
@@ -170,13 +170,13 @@ Resultatet visar att kundtypen Returning dominerar inom alla kundsegment. Segmen
 
 Utifrån analysen kan vi dra följande tydliga slutsatser kopplade till våra frågeställningar:
 
-\- Electronics är den viktigaste produktkategorin för företagets inkomst och bör prioriteras strategiskt. Samtidigt är kategorier som Beauty och Fashion betydligt mindre, vilket kan tyda på lägre efterfrågan eller potential för tillväxt genom exempelvis mer marknadsföring eller bättre prissättning på dessa produkter. \
-- Det finns tecken på samband mellan längre leveranstid och högre returbenägenhet. Våra statistiska tester visar att skillnaden i genomsnittlig leveranstid mellan returnerade och icke returnerade beställningar är statiskt signifikant. Även om skillnaden inte är särskilt stor i praktiken tyder det på att längre leveranstider kan påverka kundnöjdhet och därmed öka sannolikheten för retur. \
+\- Electronics är den viktigaste produktkategorin för företagets inkomst och bör prioriteras strategiskt. Samtidigt är kategorier som Beauty och Fashion betydligt mindre, vilket kan tyda på lägre efterfrågan eller potential för tillväxt genom exempelvis mer marknadsföring eller bättre prissättning på dessa produkter.\
+- Det finns tecken på samband mellan längre leveranstid och högre returbenägenhet. Våra statistiska tester visar att skillnaden i genomsnittlig leveranstid mellan returnerade och icke returnerade beställningar är statiskt signifikant. Även om skillnaden inte är särskilt stor i praktiken tyder det på att längre leveranstider kan påverka kundnöjdhet och därmed öka sannolikheten för retur.\
 - Sist så visar analysen av kundsegment att kundtyperna är olika fördelade mellan det olika segmenten. Returning kunder dominerar i samtliga segment, vilket tyder på att företaget har en stabil bas av återkommande kunder. Samtidigt har Consumer segmentet en relativt högre andel VIP-kunder, vilket indikerar högre lojalitet och/eller större köpvolym inom just detta segment.
 
-De mest användbara resultaten för företaget är därför: \
-- Att förstå vilka kategorier som driver försäljningen och varför \
-- Undersöka ifall leveranstid är en möjlig faktor bakom antalet returer och hur företaget kan undvika detta \
+De mest användbara resultaten för företaget är därför:\
+- Att förstå vilka kategorier som driver försäljningen och varför\
+- Undersöka ifall leveranstid är en möjlig faktor bakom antalet returer och hur företaget kan undvika detta\
 - Kundsegment har olika beteendemönster och kan kräva olika strategier beroende på kundtyp
 
 # Begränsningar
