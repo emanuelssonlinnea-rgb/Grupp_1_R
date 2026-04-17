@@ -187,7 +187,9 @@ The following object is masked from 'package:readr':
 
     col_factor</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"Grupp_1_Dataförståelse.R"</span>)</span></code></pre></div><button title="Kopiera till urklipp" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">setwd</span>(<span class="st">".."</span>)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"Grupp_1_Dataförståelse.R"</span>)</span></code></pre></div><button title="Kopiera till urklipp" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Rows: 1000 Columns: 16
 ── Column specification ────────────────────────────────────────────────────────
@@ -506,7 +508,15 @@ product_subcategory      payment_method     campaign_source            quantity
 <section id="datastädning-och-förberedelse" class="level1" data-number="6">
 <h1 data-number="6"><span class="header-section-number">6</span> Datastädning och förberedelse</h1>
 <p>Inför analysen städades alla relevant variabler och flera nya skapades för att underlätta tolkning och själva analysen.</p>
-<p>Det viktigaste förberedelserna var: * textvärden standardiserades * datum omvandlades till datumformat * saknade värden hanterades * nya variabler skapades Det nya variablerna är: * order_value - ordervärde efter rabatt * shipping_group - grupperad leveranstid * discount_group - grupperad rabattnivå</p>
+<p>Det viktigaste förberedelserna var:<br>
+- textvärden standardiserades<br>
+- datum omvandlades till datumformat<br>
+- saknade värden hanterades<br>
+- nya variabler skapades<br>
+Det nya variablerna är:<br>
+- order_value : ordervärde efter rabatt<br>
+- shipping_group : grupperad leveranstid<br>
+- discount_group : grupperad rabattnivå</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(sales_clean)</span></code></pre></div><button title="Kopiera till urklipp" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
@@ -581,7 +591,8 @@ $ discount_group   &lt;chr&gt; "Låg", "Låg", "Ingen", "Låg", "Låg", "Ingen",
 <p>Figuren visar tydligt att Electronics står för den klart högsta totala försäljningen. Home och Sports ligger efter men bidrar ändå tydligt. Fashion och Beauty ligger betydligt lägre.</p>
 <p>Detta tyder på att Electronics är företagets viktigaste försäljningsdrivare. För företaget är detta relevant i beslut om sortiment, lager och marknadsförings planer. Det kategorier som ligger lägre kan antingen ha lägre efterfrågan eller vara områden där företaget har utvecklingspotential.</p>
 <ol start="2" type="1">
-<li>Finns det tecken på att längre leveranstid hänger ihop med fler returer? För att undersöka detta jämfördes leveranstid mellan returnerade och icke returnerade beställningar, både genom sammanfattande statistik och genom visualisering.</li>
+<li>Finns det tecken på att längre leveranstid hänger ihop med fler returer?<br>
+För att undersöka detta jämfördes leveranstid mellan returnerade och icke returnerade beställningar, både genom sammanfattande statistik och genom visualisering.</li>
 </ol>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>shipping_return</span></code></pre></div><button title="Kopiera till urklipp" class="code-copy-button"><i class="bi"></i></button></div>
@@ -631,7 +642,8 @@ mean in group FALSE  mean in group TRUE
 <h3 data-number="6.1.2" class="anchored" data-anchor-id="tolkning-1"><span class="header-section-number">6.1.2</span> Tolkning</h3>
 <p>Den visuella skillnaden mellan grupperna är inte speciellt stor, men den statistiska analysen visar att returnerade beställningar i genomsnitt verkar ha något längre leveranstid än beställningar som inte returneras. Det finns alltså tecken på ett samband mellan längre leveranstid och fler returer. Samtidigt bör resultatet tolkas försiktigt. Analysen visar ett samband, men inte att leveranstid i sig orsakar returer. Andra faktorer som till exempel produktkategori eller kundförväntningar kan också spela roll.</p>
 <ol start="3" type="1">
-<li>Hur skiljer sig kundtyper mellan olika kundsegment? Här analyserades hur kundtyperna New, Returning ooch VIP fördelar sig inom olika segment.</li>
+<li>Hur skiljer sig kundtyper mellan olika kundsegment?<br>
+Här analyserades hur kundtyperna New, Returning och VIP fördelar sig inom olika segment.</li>
 </ol>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>tabell_segment_typ</span></code></pre></div><button title="Kopiera till urklipp" class="code-copy-button"><i class="bi"></i></button></div>
@@ -683,8 +695,14 @@ mean in group FALSE  mean in group TRUE
 </section>
 <section id="sammanfattande-slutsatser" class="level1" data-number="7">
 <h1 data-number="7"><span class="header-section-number">7</span> Sammanfattande slutsatser</h1>
-<p>Utifrån analysen kan vi dra följande tydliga slutsatser kopplade till våra frågeställningar: * Electronics är den viktigaste produktkategorin för företagets inkomst och bör prioriteras strategiskt. Samtidigt är kategorier som Beauty och Fashion betydligt mindre, vilket kan tyda på lägre efterfrågan eller potential för tillväxt genom exempelvis mer marknadsföring eller bättre prissättning på dessa produkter. * Det finns tecken på samband mellan längre leveranstid och högre returbenägenhet. Våra statistiska tester visar att skillnaden i genomsnittlig leveranstid mellan returnerade och icke returnerade beställningar är statiskt signifikant. Även om skillnaden inte är särskilt stor i praktiken tyder det på att längre leveranstider kan påverka kundnöjdhet och därmed öka sannolikheten för retur. * Sist så visar analysen av kundsegment att kundtyperna är olika fördelade mellan det olika segmenten. Returning kunder dominerar i samtliga segment, vilket tyder på att företaget har en stabil bas av återkommande kunder. Samtidigt har Consumer segmentet en relativt högre andel VIP-kunder, vilket indikerar högre lojalitet och/eller större köpvolym inom just detta segment.</p>
-<p>De mest användbara resultaten för företaget är därför: * Att förstå vilka kategorier som driver försäljningen och varför * Undersöka ifall leveranstid är en möjlig faktor bakom antalet returer och hur företaget kan undvika detta * Kundsegment har olika beteendemönster och kan kräva olika strategier beroende på kundtyp</p>
+<p>Utifrån analysen kan vi dra följande tydliga slutsatser kopplade till våra frågeställningar:</p>
+<p>- Electronics är den viktigaste produktkategorin för företagets inkomst och bör prioriteras strategiskt. Samtidigt är kategorier som Beauty och Fashion betydligt mindre, vilket kan tyda på lägre efterfrågan eller potential för tillväxt genom exempelvis mer marknadsföring eller bättre prissättning på dessa produkter.<br>
+- Det finns tecken på samband mellan längre leveranstid och högre returbenägenhet. Våra statistiska tester visar att skillnaden i genomsnittlig leveranstid mellan returnerade och icke returnerade beställningar är statiskt signifikant. Även om skillnaden inte är särskilt stor i praktiken tyder det på att längre leveranstider kan påverka kundnöjdhet och därmed öka sannolikheten för retur.<br>
+- Sist så visar analysen av kundsegment att kundtyperna är olika fördelade mellan det olika segmenten. Returning kunder dominerar i samtliga segment, vilket tyder på att företaget har en stabil bas av återkommande kunder. Samtidigt har Consumer segmentet en relativt högre andel VIP-kunder, vilket indikerar högre lojalitet och/eller större köpvolym inom just detta segment.</p>
+<p>De mest användbara resultaten för företaget är därför:<br>
+- Att förstå vilka kategorier som driver försäljningen och varför<br>
+- Undersöka ifall leveranstid är en möjlig faktor bakom antalet returer och hur företaget kan undvika detta<br>
+- Kundsegment har olika beteendemönster och kan kräva olika strategier beroende på kundtyp</p>
 </section>
 <section id="begränsningar" class="level1" data-number="8">
 <h1 data-number="8"><span class="header-section-number">8</span> Begränsningar</h1>
