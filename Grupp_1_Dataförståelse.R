@@ -3,11 +3,12 @@
 
 library(tidyverse)
 library(scales)
-install.packages("usethis")
-usethis::use_git_config(user.name="emanuelssonlinnea-rgb", user.email="emanuelsson.linnea@gmail.com")
+
 
 
 raw_data <- read_csv("ecommerce_orders.csv")
+
+
 
 # visa datasetets storlek 
 glimpse(raw_data)
@@ -20,6 +21,17 @@ colSums(is.na(raw_data))
 
 
 # Snabb överblick av olika delar av datan
+# försäljning bland olika kundsegment
+
+raw_data %>%
+  group_by(customer_segment) %>%
+  summarise(
+    avg_spend    = mean(quantity * unit_price, na.rm = TRUE),
+    median_spend = median(quantity * unit_price, na.rm = TRUE),
+    sd_spend     = sd(quantity * unit_price, na.rm = TRUE),
+    n            = n(),
+    .groups = "drop"
+  )
 
 # Kund överblick -> segments & types ---------------------------------------------------
 
@@ -46,19 +58,29 @@ ggplot(plot_data, aes(
     expand = expansion(mult = c(0, 0.15))          
   )+ 
   scale_fill_brewer(palette = "Dark2")+
-  labs(title = "Customer segment overview", 
-       y = "Customer type, %", x="Customer segment")  + 
+  labs(title = "Kundsegment överblick", 
+       y = "Kundtyp, %", x="Kundsegment")  + 
   theme(axis.text.x = element_text(angle = 45, hjust = 1),
         plot.margin = margin(b = 20)
   )
 
 
+
+# antal kunder per region----------------------------------------------------------------------------
+
+ggplot(raw_data, aes(x = region, fill = customer_type)) +
+  geom_bar() + 
+  scale_fill_brewer(palette = "Dark2")+
+  labs(
+    title = "Antal kunder per region",
+    x = "Region",
+    y = "Antal kunder"
+  )
+
 #Samband mellan betalningsmetod och retur av varor ---------------------------------------------------
 
 unique(raw_data$payment_method) 
 #cleaning up payment method so we can look at the covariance between the two unimpeded
-#Earlier payment method = "Card", NA, "PayPal", "Invoice", "Gift Card", "Swish", "card", "Paypal"   
-#Now = "Card",NA,"Paypal","Invoice","Gift Card","Swish"
 
 raw_data <- raw_data %>%
   mutate(
@@ -88,9 +110,9 @@ ggplot(plot_data, aes(
   scale_y_continuous(labels = scales::percent) +
   scale_fill_brewer(palette = "Dark2") +
   labs(
-    title = "Return rate by payment method",
-    y = "Return proportion",
-    x = "Payment Method"
+    title = "Returer enligt betalningsmetod",
+    y = "Returproportion",
+    x = "Betalningsmetod"
   ) +
   theme(
     axis.text.x = element_text(angle = 45, hjust = 1),
@@ -119,9 +141,9 @@ ggplot(plot_data, aes(
   scale_y_continuous(labels = scales::percent) +
   scale_fill_brewer(palette = "Dark2") +
   labs(
-    title = "Return rate by customer segment",
-    y = "Return proportion",
-    x = "Customer segment"
+    title = "Returer per kundsegment",
+    y = "Returproportion",
+    x = "Kundsegment"
   ) +
   theme(
     axis.text.x = element_text(angle = 45, hjust = 1),
@@ -129,3 +151,12 @@ ggplot(plot_data, aes(
   )
 
 # beskriva kort vilka delar av datan som verkar viktigast för er analys 
+# baserat på dem frågeställningarna vi valt: 
+# Vilka produktkategorier verkar driva högst försäljning?
+# Finns det tecken på att längre leveranstid hänger ihop med fler returer?
+# egen frågeställning: Hur skiljer sig kundtyper bland olika kundsegment?
+# viktigaste delar av datan är då: 
+# customer_segment, customer_type, product_category,  
+# quantity, unit_price, shipping_days, returned
+# mindre viktiga men intressant för jämförelse: region, city
+
