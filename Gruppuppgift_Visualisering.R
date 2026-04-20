@@ -81,6 +81,7 @@ ggplot(tabell_segment_typ, aes(
 
 
 # TESTAR ÄVEN RABATT VS ORDERVÄRDE (BONUS)
+
 ggplot(sales_clean, aes(
   x = discount_group,
   y = order_value
