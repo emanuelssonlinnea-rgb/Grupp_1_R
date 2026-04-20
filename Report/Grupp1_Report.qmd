@@ -1,0 +1,202 @@
+---
+title: "E-handel - analys av försäljning, kundbeteende och returmönster"
+author: "Grupp 1"
+format:
+  html:
+    toc: true
+    number-sections: true
+    theme: cosmo
+lang: sv
+editor: visual
+---
+
+# Syfte
+
+Syftet med analysen i denna rapporten är att undersöka försäljning, kundbeteende och returmönster i ett e-handelsföretag. Företaget vill använda data som underlag för beslut för att till exempel förstå vilka kategorier som driver försäljning, hur olika kundgrupper beter sig och om det finns samband mellan leveranstid och returer.
+
+# Frågeställningar
+
+Vi har valt att fokusera på följande tre frågeställningar:
+
+1.  Vilka produktkategorier verkar driva högst försäljning?
+2.  Finns det tecken på att längre leveranstid hänger ihop med fler returer?
+3.  Hur skiljer sig kundtyper mellan olika kundsegment?
+
+# Metod
+
+Analysen gemonfördes i flera steg:
+
+-   dataförståelse och initial utforskning
+-   datastädning och förberedelse
+-   statistiska sammanfattningar
+-   visualisering av resultat
+-   tolkning och slutsatser
+
+Vi använder R och paket som `tidyverse` för datahantering och visualisering.
+
+# Ladda kod och data
+
+```{r}
+library(tidyverse)
+library(scales)
+
+setwd("..")
+
+source("Grupp_1_Dataförståelse.R")
+source("data_städning_förberedesle.R")
+source("Statistiska_sammanfattningar.R")
+source("Gruppuppgift_Visualisering.R")
+```
+
+# Dataförståelse
+
+Datasetet innehåller orderdata från företaget information om produkter, kunder, leveranser och returer.
+
+```{r}
+dim(raw_data)
+glimpse(raw_data)
+summary(raw_data)
+```
+
+Datasetet innehåller både numeriska och kategoriska variabler, vilket påverkar hur datan behöver bearbetas.
+
+## Saknade värden
+
+```{r}
+colSums(is.na(raw_data))
+```
+
+Det finns vissa saknade värden i den råa datan. Dessa hanterades i datastädningssteget med funktioner som till exempel medianimputering för numeriska variabler och standardvärden för vissa textvariabler.
+
+# Datastädning och förberedelse
+
+Inför analysen städades alla relevant variabler och flera nya skapades för att underlätta tolkning och själva analysen.
+
+Det viktigaste förberedelserna var:\
+\* texture standardiserades\
+- datum omvandlades till datumformat\
+- saknade värden hanterades\
+- nya variabler skapades\
+Det nya variablerna är:\
+- order_value : ordervärde efter rabatt\
+- shipping_group : grupperad leveranstid\
+- discount_group : grupperad rabattnivå
+
+```{r}
+glimpse(sales_clean)
+colSums(is.na(sales_clean))
+```
+
+## Resultat och Tolkning
+
+1.  Vilka produktkategorier verkar driva högst försäljning? För att besvara denna fråga summerades total försäljning per produktkategori, samt medel/median-värde för ordervärde
+
+```{r}
+sales_category
+
+ggplot(sales_category, aes(
+  x = reorder(product_category, total_forsaljning),
+  y = total_forsaljning
+)) + 
+  geom_col(fill = "lightgreen") + 
+  coord_flip() +
+  scale_y_continuous(labels = scales::comma) +
+  labs(
+    title = "Total försäljning per produktkategori",
+    x = "Produktkategori",
+    y = "Total försäljning"
+  )
+```
+
+### Tolkning
+
+Figuren visar tydligt att Electronics står för den klart högsta totala försäljningen. Home och Sports ligger efter men bidrar ändå tydligt. Fashion och Beauty ligger betydligt lägre.
+
+Detta tyder på att Electronics är företagets viktigaste försäljningsdrivare. För företaget är detta relevant i beslut om sortiment, lager och marknadsförings planer. Det kategorier som ligger lägre kan antingen ha lägre efterfrågan eller vara områden där företaget har utvecklingspotential.
+
+2.  Finns det tecken på att längre leveranstid hänger ihop med fler returer?\
+    För att undersöka detta jämfördes leveranstid mellan returnerade och icke returnerade beställningar, både genom sammanfattande statistik och genom visualisering.
+
+```{r}
+shipping_return
+shipping_return_test
+
+ggplot(sales_clean, aes(
+  x = returned,
+  y = shipping_days,
+  fill = returned
+)) +
+  geom_boxplot() + 
+  scale_fill_brewer(palette = "Set2") + 
+  labs(
+    title = "Leveranstid för returnerade vs icke returnerade beställningar",
+    x = "Returnerad (TRUE = ja, FALSE = nej)",
+    y = "Leveranstid (dagar)"
+  )
+```
+
+### Tolkning
+
+Den visuella skillnaden mellan grupperna är inte speciellt stor, men den statistiska analysen visar att returnerade beställningar i genomsnitt verkar ha något längre leveranstid än beställningar som inte returneras. Det finns alltså tecken på ett samband mellan längre leveranstid och fler returer. Samtidigt bör resultatet tolkas försiktigt. Analysen visar ett samband, men inte att leveranstid i sig orsakar returer. Andra faktorer som till exempel produktkategori eller kundförväntningar kan också spela roll.
+
+3.  Hur skiljer sig kundtyper mellan olika kundsegment?\
+    Här analyserades hur kundtyperna New, Returning och VIP fördelar sig inom olika segment.
+
+```{r}
+tabell_segment_typ
+
+ggplot(tabell_segment_typ, aes(
+  x = customer_segment,
+  y = andel_inom_segment,
+  fill = customer_type
+)) +
+  geom_col(position = "fill") +
+  scale_y_continuous(labels = scales::percent) +
+  scale_fill_brewer(palette = "Dark2") +
+  labs(
+    title = "Fördelning av kundtyper inom kundsegment",
+    x = "Kundsegment",
+    y = "Andel",
+    fill = "Kundtyp"
+  ) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+### Tolkning
+
+Resultatet visar att kundtypen Returning dominerar inom alla kundsegment. Segmentet Consumer har en tydligt högre andel VIP-kunder än övriga segment, vilket tyder på högre kundlojalitet i detta segment.
+
+# Sammanfattande slutsatser
+
+Utifrån analysen kan vi dra följande tydliga slutsatser kopplade till våra frågeställningar:
+
+\- Electronics är den viktigaste produktkategorin för företagets inkomst och bör prioriteras strategiskt. Samtidigt är kategorier som Beauty och Fashion betydligt mindre, vilket kan tyda på lägre efterfrågan eller potential för tillväxt genom exempelvis mer marknadsföring eller bättre prissättning på dessa produkter.\
+- Det finns tecken på samband mellan längre leveranstid och högre returbenägenhet. Våra statistiska tester visar att skillnaden i genomsnittlig leveranstid mellan returnerade och icke returnerade beställningar är statiskt signifikant. Även om skillnaden inte är särskilt stor i praktiken tyder det på att längre leveranstider kan påverka kundnöjdhet och därmed öka sannolikheten för retur.\
+- Sist så visar analysen av kundsegment att kundtyperna är olika fördelade mellan det olika segmenten. Returning kunder dominerar i samtliga segment, vilket tyder på att företaget har en stabil bas av återkommande kunder. Samtidigt har Consumer segmentet en relativt högre andel VIP-kunder, vilket indikerar högre lojalitet och/eller större köpvolym inom just detta segment.
+
+De mest användbara resultaten för företaget är därför:\
+- Att förstå vilka kategorier som driver försäljningen och varför\
+- Undersöka ifall leveranstid är en möjlig faktor bakom antalet returer och hur företaget kan undvika detta\
+- Kundsegment har olika beteendemönster och kan kräva olika strategier beroende på kundtyp
+
+# Begränsningar
+
+Det finns flera begränsningar i datan och analysen som är viktiga att ta hänsyn till.
+
+Först så är datasetet relativt begränsat i storlek och omfattning. Detta innebär att resultaten kanske inte representerar alla kundbeteenden eller variationer över tid helt fullt.
+
+För det andra har vissa saknade värden hanteras genom imputering, till exempel genom att ersätta värden med median eller standardvärden. Även om detta är en rimlig metod kan det påverka precisionen i analysen.
+
+Samt så analyserar vi främst samband mellan variabler, inte sambandet mellan orsakerna. Som exempel kan vi se att längre leveranstid hänger ihop med fler returer, men vi kan inte med hög säkerhet säga att leveranstiden är huvudorsaken til detta utan vidare analys. Något som yttligare hade hjälpt här hade varit flera variabler som kanske tidigare köpbeteende eller kundnöjdhet.
+
+Sammanfattningsvis innebär detta att resultaten bör tolkas som indikationer snarare än exakta sanningar och att vidare analys behövs för att bekräfta slutsatserna.
+
+# Nästa Steg
+
+Baserat på analysen och resultaten finns det fleratal nästa steg för företaget:
+
+-   Analysera varför Electronics driver majoriteten av försäljningen och komma fram till hur mindre kategorier kan utvecklas för att uppnå liknande resultat
+-   Undersöka ifall snabbare leveranser faktiskt minskar returgraden i praktiken
+-   Arbeta mer riktat mot underrepresenterade kundsegment. Till exempel kan VIP-kunder kanske få särskilda erbjudanden och nya kunder få fler incitament att återkomma ooch bli Returning kunder
+
+Sist så skulle företaget kunna arbeta vidare med mer avancderad analys som till exempel prediktiva modeller för att förutsäga returer eller olika kundbeteenden. Detta skulle kunna ge ännu mer värdefulla insikter och stödja beslut enklare.

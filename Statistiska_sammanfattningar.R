@@ -32,7 +32,7 @@ shipping_return <- sales_clean %>%
     .groups = "drop"
   )
   
-View(shipping_return)
+print(shipping_return)
 
 # t-test för att undersöka om det finns skillnad i genomsnittlig leveranstid.
 # mellan beställningar som har returnerats och de som inte har returnerats. 

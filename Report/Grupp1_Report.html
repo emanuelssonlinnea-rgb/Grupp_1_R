@@ -1,0 +1,1133 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="sv" xml:lang="sv"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.25">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Grupp 1">
+
+<title>E-handel - analys av försäljning, kundbeteende och returmönster</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="Grupp1_Report_files/libs/clipboard/clipboard.min.js"></script>
+<script src="Grupp1_Report_files/libs/quarto-html/quarto.js" type="module"></script>
+<script src="Grupp1_Report_files/libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="Grupp1_Report_files/libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="Grupp1_Report_files/libs/quarto-html/popper.min.js"></script>
+<script src="Grupp1_Report_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="Grupp1_Report_files/libs/quarto-html/anchor.min.js"></script>
+<link href="Grupp1_Report_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="Grupp1_Report_files/libs/quarto-html/quarto-syntax-highlighting-7b89279ff1a6dce999919e0e67d4d9ec.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="Grupp1_Report_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="Grupp1_Report_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="Grupp1_Report_files/libs/bootstrap/bootstrap-4d7f0bce1131f3e5f9547cd857cfbfc8.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+
+
+</head>
+
+<body class="quarto-light">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+  <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Innehållsförteckning</h2>
+   
+  <ul>
+  <li><a href="#syfte" id="toc-syfte" class="nav-link active" data-scroll-target="#syfte"><span class="header-section-number">1</span> Syfte</a></li>
+  <li><a href="#frågeställningar" id="toc-frågeställningar" class="nav-link" data-scroll-target="#frågeställningar"><span class="header-section-number">2</span> Frågeställningar</a></li>
+  <li><a href="#metod" id="toc-metod" class="nav-link" data-scroll-target="#metod"><span class="header-section-number">3</span> Metod</a></li>
+  <li><a href="#ladda-kod-och-data" id="toc-ladda-kod-och-data" class="nav-link" data-scroll-target="#ladda-kod-och-data"><span class="header-section-number">4</span> Ladda kod och data</a></li>
+  <li><a href="#dataförståelse" id="toc-dataförståelse" class="nav-link" data-scroll-target="#dataförståelse"><span class="header-section-number">5</span> Dataförståelse</a>
+  <ul class="collapse">
+  <li><a href="#saknade-värden" id="toc-saknade-värden" class="nav-link" data-scroll-target="#saknade-värden"><span class="header-section-number">5.1</span> Saknade värden</a></li>
+  </ul></li>
+  <li><a href="#datastädning-och-förberedelse" id="toc-datastädning-och-förberedelse" class="nav-link" data-scroll-target="#datastädning-och-förberedelse"><span class="header-section-number">6</span> Datastädning och förberedelse</a>
+  <ul class="collapse">
+  <li><a href="#resultat-och-tolkning" id="toc-resultat-och-tolkning" class="nav-link" data-scroll-target="#resultat-och-tolkning"><span class="header-section-number">6.1</span> Resultat och Tolkning</a>
+  <ul class="collapse">
+  <li><a href="#tolkning" id="toc-tolkning" class="nav-link" data-scroll-target="#tolkning"><span class="header-section-number">6.1.1</span> Tolkning</a></li>
+  <li><a href="#tolkning-1" id="toc-tolkning-1" class="nav-link" data-scroll-target="#tolkning-1"><span class="header-section-number">6.1.2</span> Tolkning</a></li>
+  <li><a href="#tolkning-2" id="toc-tolkning-2" class="nav-link" data-scroll-target="#tolkning-2"><span class="header-section-number">6.1.3</span> Tolkning</a></li>
+  </ul></li>
+  </ul></li>
+  <li><a href="#sammanfattande-slutsatser" id="toc-sammanfattande-slutsatser" class="nav-link" data-scroll-target="#sammanfattande-slutsatser"><span class="header-section-number">7</span> Sammanfattande slutsatser</a></li>
+  <li><a href="#begränsningar" id="toc-begränsningar" class="nav-link" data-scroll-target="#begränsningar"><span class="header-section-number">8</span> Begränsningar</a></li>
+  <li><a href="#nästa-steg" id="toc-nästa-steg" class="nav-link" data-scroll-target="#nästa-steg"><span class="header-section-number">9</span> Nästa Steg</a></li>
+  </ul>
+</nav>
+</div>
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">E-handel - analys av försäljning, kundbeteende och returmönster</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Författare</div>
+    <div class="quarto-title-meta-contents">
+             <p>Grupp 1 </p>
+          </div>
+  </div>
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="syfte" class="level1" data-number="1">
+<h1 data-number="1"><span class="header-section-number">1</span> Syfte</h1>
+<p>Syftet med analysen i denna rapporten är att undersöka försäljning, kundbeteende och returmönster i ett e-handelsföretag. Företaget vill använda data som underlag för beslut för att till exempel förstå vilka kategorier som driver försäljning, hur olika kundgrupper beter sig och om det finns samband mellan leveranstid och returer.</p>
+</section>
+<section id="frågeställningar" class="level1" data-number="2">
+<h1 data-number="2"><span class="header-section-number">2</span> Frågeställningar</h1>
+<p>Vi har valt att fokusera på följande tre frågeställningar:</p>
+<ol type="1">
+<li>Vilka produktkategorier verkar driva högst försäljning?</li>
+<li>Finns det tecken på att längre leveranstid hänger ihop med fler returer?</li>
+<li>Hur skiljer sig kundtyper mellan olika kundsegment?</li>
+</ol>
+</section>
+<section id="metod" class="level1" data-number="3">
+<h1 data-number="3"><span class="header-section-number">3</span> Metod</h1>
+<p>Analysen gemonfördes i flera steg:</p>
+<ul>
+<li>dataförståelse och initial utforskning</li>
+<li>datastädning och förberedelse</li>
+<li>statistiska sammanfattningar</li>
+<li>visualisering av resultat</li>
+<li>tolkning och slutsatser</li>
+</ul>
+<p>Vi använder R och paket som <code>tidyverse</code> för datahantering och visualisering.</p>
+</section>
+<section id="ladda-kod-och-data" class="level1" data-number="4">
+<h1 data-number="4"><span class="header-section-number">4</span> Ladda kod och data</h1>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code></pre></div><button title="Kopiera till urklipp" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+✔ dplyr     1.2.0     ✔ readr     2.2.0
+✔ forcats   1.0.1     ✔ stringr   1.6.0
+✔ ggplot2   4.0.2     ✔ tibble    3.3.1
+✔ lubridate 1.9.5     ✔ tidyr     1.3.2
+✔ purrr     1.2.1     
+── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+✖ dplyr::filter() masks stats::filter()
+✖ dplyr::lag()    masks stats::lag()
+ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(scales)</span></code></pre></div><button title="Kopiera till urklipp" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'scales'
+
+The following object is masked from 'package:purrr':
+
+    discard
+
+The following object is masked from 'package:readr':
+
+    col_factor</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">setwd</span>(<span class="st">".."</span>)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"Grupp_1_Dataförståelse.R"</span>)</span></code></pre></div><button title="Kopiera till urklipp" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Rows: 1000 Columns: 16
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: ","
+chr  (11): order_id, customer_id, customer_segment, customer_type, region, c...
+dbl   (4): quantity, unit_price, discount_pct, shipping_days
+date  (1): order_date
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 1,000
+Columns: 16
+$ order_id            &lt;chr&gt; "O2025001", "O2025002", "O2025003", "O2025004", "O…
+$ order_date          &lt;date&gt; 2025-04-25, 2025-12-26, 2025-11-06, 2025-10-09, 2…
+$ customer_id         &lt;chr&gt; "C1198", "C1212", "C1096", "C1160", "C1063", "C109…
+$ customer_segment    &lt;chr&gt; "Consumer", "Corporate", "Consumer", "Consumer", "…
+$ customer_type       &lt;chr&gt; "VIP", "New", "Returning", "New", "Returning", "Re…
+$ region              &lt;chr&gt; "South", "South", "North", "East", "East", "West",…
+$ city                &lt;chr&gt; "Helsingborg", "Malmo", "Uppsala", "Orebro", "Link…
+$ product_category    &lt;chr&gt; "Beauty", "Fashion", "Sports", "Fashion", "Beauty"…
+$ product_subcategory &lt;chr&gt; "Skincare", "Sportswear", "Fitness", "Shoes", "Ski…
+$ payment_method      &lt;chr&gt; "Card", NA, "PayPal", "PayPal", "Invoice", "Card",…
+$ campaign_source     &lt;chr&gt; "Organic", "Organic", "Organic", "Affiliate", "Pai…
+$ quantity            &lt;dbl&gt; 4, 1, 1, 1, 2, 3, 1, 1, 4, 2, 1, 1, 1, 1, 1, 1, 2,…
+$ unit_price          &lt;dbl&gt; 33.90, 91.08, 190.22, 144.56, 52.01, 120.84, 97.55…
+$ discount_pct        &lt;dbl&gt; 0.182, 0.013, 0.000, 0.042, 0.091, NA, 0.055, 0.12…
+$ shipping_days       &lt;dbl&gt; 3, 2, 3, 5, 4, 4, 1, 5, 3, 5, 2, 4, 2, 4, 3, 5, 5,…
+$ returned            &lt;chr&gt; "Yes", "No", "No", "No", "No", "Yes", "No", "No", …</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"data_städning_förberedesle.R"</span>)</span></code></pre></div><button title="Kopiera till urklipp" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Rows: 1000 Columns: 16
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: ","
+chr  (11): order_id, customer_id, customer_segment, customer_type, region, c...
+dbl   (4): quantity, unit_price, discount_pct, shipping_days
+date  (1): order_date
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 1,000
+Columns: 16
+$ order_id            &lt;chr&gt; "O2025001", "O2025002", "O2025003", "O2025004", "O…
+$ order_date          &lt;date&gt; 2025-04-25, 2025-12-26, 2025-11-06, 2025-10-09, 2…
+$ customer_id         &lt;chr&gt; "C1198", "C1212", "C1096", "C1160", "C1063", "C109…
+$ customer_segment    &lt;chr&gt; "Consumer", "Corporate", "Consumer", "Consumer", "…
+$ customer_type       &lt;chr&gt; "VIP", "New", "Returning", "New", "Returning", "Re…
+$ region              &lt;chr&gt; "South", "South", "North", "East", "East", "West",…
+$ city                &lt;chr&gt; "Helsingborg", "Malmo", "Uppsala", "Orebro", "Link…
+$ product_category    &lt;chr&gt; "Beauty", "Fashion", "Sports", "Fashion", "Beauty"…
+$ product_subcategory &lt;chr&gt; "Skincare", "Sportswear", "Fitness", "Shoes", "Ski…
+$ payment_method      &lt;chr&gt; "Card", NA, "PayPal", "PayPal", "Invoice", "Card",…
+$ campaign_source     &lt;chr&gt; "Organic", "Organic", "Organic", "Affiliate", "Pai…
+$ quantity            &lt;dbl&gt; 4, 1, 1, 1, 2, 3, 1, 1, 4, 2, 1, 1, 1, 1, 1, 1, 2,…
+$ unit_price          &lt;dbl&gt; 33.90, 91.08, 190.22, 144.56, 52.01, 120.84, 97.55…
+$ discount_pct        &lt;dbl&gt; 0.182, 0.013, 0.000, 0.042, 0.091, NA, 0.055, 0.12…
+$ shipping_days       &lt;dbl&gt; 3, 2, 3, 5, 4, 4, 1, 5, 3, 5, 2, 4, 2, 4, 3, 5, 5,…
+$ returned            &lt;chr&gt; "Yes", "No", "No", "No", "No", "Yes", "No", "No", …</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"Statistiska_sammanfattningar.R"</span>)</span></code></pre></div><button title="Kopiera till urklipp" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Rows: 1000 Columns: 16
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: ","
+chr  (11): order_id, customer_id, customer_segment, customer_type, region, c...
+dbl   (4): quantity, unit_price, discount_pct, shipping_days
+date  (1): order_date
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 1,000
+Columns: 16
+$ order_id            &lt;chr&gt; "O2025001", "O2025002", "O2025003", "O2025004", "O…
+$ order_date          &lt;date&gt; 2025-04-25, 2025-12-26, 2025-11-06, 2025-10-09, 2…
+$ customer_id         &lt;chr&gt; "C1198", "C1212", "C1096", "C1160", "C1063", "C109…
+$ customer_segment    &lt;chr&gt; "Consumer", "Corporate", "Consumer", "Consumer", "…
+$ customer_type       &lt;chr&gt; "VIP", "New", "Returning", "New", "Returning", "Re…
+$ region              &lt;chr&gt; "South", "South", "North", "East", "East", "West",…
+$ city                &lt;chr&gt; "Helsingborg", "Malmo", "Uppsala", "Orebro", "Link…
+$ product_category    &lt;chr&gt; "Beauty", "Fashion", "Sports", "Fashion", "Beauty"…
+$ product_subcategory &lt;chr&gt; "Skincare", "Sportswear", "Fitness", "Shoes", "Ski…
+$ payment_method      &lt;chr&gt; "Card", NA, "PayPal", "PayPal", "Invoice", "Card",…
+$ campaign_source     &lt;chr&gt; "Organic", "Organic", "Organic", "Affiliate", "Pai…
+$ quantity            &lt;dbl&gt; 4, 1, 1, 1, 2, 3, 1, 1, 4, 2, 1, 1, 1, 1, 1, 1, 2,…
+$ unit_price          &lt;dbl&gt; 33.90, 91.08, 190.22, 144.56, 52.01, 120.84, 97.55…
+$ discount_pct        &lt;dbl&gt; 0.182, 0.013, 0.000, 0.042, 0.091, NA, 0.055, 0.12…
+$ shipping_days       &lt;dbl&gt; 3, 2, 3, 5, 4, 4, 1, 5, 3, 5, 2, 4, 2, 4, 3, 5, 5,…
+$ returned            &lt;chr&gt; "Yes", "No", "No", "No", "No", "Yes", "No", "No", …
+# A tibble: 5 × 6
+  product_category total_forsaljning medel_ordervarde median_ordervarde antal
+  &lt;chr&gt;                        &lt;dbl&gt;            &lt;dbl&gt;             &lt;dbl&gt; &lt;int&gt;
+1 Electronics                155811.            641.              450.    243
+2 Home                        60569.            293.              143.    207
+3 Sports                      54312.            348.              219.    156
+4 Fashion                     32207.            137.              102.    235
+5 Beauty                      12156.             76.5              62.9   159
+  andel_forsaljning
+              &lt;dbl&gt;
+1            0.495 
+2            0.192 
+3            0.172 
+4            0.102 
+5            0.0386
+# A tibble: 2 × 5
+  returned antal medel_leveranstid median_leveranstid sd_leveranstid
+  &lt;lgl&gt;    &lt;int&gt;             &lt;dbl&gt;              &lt;dbl&gt;          &lt;dbl&gt;
+1 FALSE      856              3.56                  4           1.46
+2 TRUE       144              3.98                  4           1.57</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">"Gruppuppgift_Visualisering.R"</span>)</span></code></pre></div><button title="Kopiera till urklipp" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Rows: 1000 Columns: 16
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: ","
+chr  (11): order_id, customer_id, customer_segment, customer_type, region, c...
+dbl   (4): quantity, unit_price, discount_pct, shipping_days
+date  (1): order_date
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 1,000
+Columns: 16
+$ order_id            &lt;chr&gt; "O2025001", "O2025002", "O2025003", "O2025004", "O…
+$ order_date          &lt;date&gt; 2025-04-25, 2025-12-26, 2025-11-06, 2025-10-09, 2…
+$ customer_id         &lt;chr&gt; "C1198", "C1212", "C1096", "C1160", "C1063", "C109…
+$ customer_segment    &lt;chr&gt; "Consumer", "Corporate", "Consumer", "Consumer", "…
+$ customer_type       &lt;chr&gt; "VIP", "New", "Returning", "New", "Returning", "Re…
+$ region              &lt;chr&gt; "South", "South", "North", "East", "East", "West",…
+$ city                &lt;chr&gt; "Helsingborg", "Malmo", "Uppsala", "Orebro", "Link…
+$ product_category    &lt;chr&gt; "Beauty", "Fashion", "Sports", "Fashion", "Beauty"…
+$ product_subcategory &lt;chr&gt; "Skincare", "Sportswear", "Fitness", "Shoes", "Ski…
+$ payment_method      &lt;chr&gt; "Card", NA, "PayPal", "PayPal", "Invoice", "Card",…
+$ campaign_source     &lt;chr&gt; "Organic", "Organic", "Organic", "Affiliate", "Pai…
+$ quantity            &lt;dbl&gt; 4, 1, 1, 1, 2, 3, 1, 1, 4, 2, 1, 1, 1, 1, 1, 1, 2,…
+$ unit_price          &lt;dbl&gt; 33.90, 91.08, 190.22, 144.56, 52.01, 120.84, 97.55…
+$ discount_pct        &lt;dbl&gt; 0.182, 0.013, 0.000, 0.042, 0.091, NA, 0.055, 0.12…
+$ shipping_days       &lt;dbl&gt; 3, 2, 3, 5, 4, 4, 1, 5, 3, 5, 2, 4, 2, 4, 3, 5, 5,…
+$ returned            &lt;chr&gt; "Yes", "No", "No", "No", "No", "Yes", "No", "No", …</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Rows: 1000 Columns: 16
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: ","
+chr  (11): order_id, customer_id, customer_segment, customer_type, region, c...
+dbl   (4): quantity, unit_price, discount_pct, shipping_days
+date  (1): order_date
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 1,000
+Columns: 16
+$ order_id            &lt;chr&gt; "O2025001", "O2025002", "O2025003", "O2025004", "O…
+$ order_date          &lt;date&gt; 2025-04-25, 2025-12-26, 2025-11-06, 2025-10-09, 2…
+$ customer_id         &lt;chr&gt; "C1198", "C1212", "C1096", "C1160", "C1063", "C109…
+$ customer_segment    &lt;chr&gt; "Consumer", "Corporate", "Consumer", "Consumer", "…
+$ customer_type       &lt;chr&gt; "VIP", "New", "Returning", "New", "Returning", "Re…
+$ region              &lt;chr&gt; "South", "South", "North", "East", "East", "West",…
+$ city                &lt;chr&gt; "Helsingborg", "Malmo", "Uppsala", "Orebro", "Link…
+$ product_category    &lt;chr&gt; "Beauty", "Fashion", "Sports", "Fashion", "Beauty"…
+$ product_subcategory &lt;chr&gt; "Skincare", "Sportswear", "Fitness", "Shoes", "Ski…
+$ payment_method      &lt;chr&gt; "Card", NA, "PayPal", "PayPal", "Invoice", "Card",…
+$ campaign_source     &lt;chr&gt; "Organic", "Organic", "Organic", "Affiliate", "Pai…
+$ quantity            &lt;dbl&gt; 4, 1, 1, 1, 2, 3, 1, 1, 4, 2, 1, 1, 1, 1, 1, 1, 2,…
+$ unit_price          &lt;dbl&gt; 33.90, 91.08, 190.22, 144.56, 52.01, 120.84, 97.55…
+$ discount_pct        &lt;dbl&gt; 0.182, 0.013, 0.000, 0.042, 0.091, NA, 0.055, 0.12…
+$ shipping_days       &lt;dbl&gt; 3, 2, 3, 5, 4, 4, 1, 5, 3, 5, 2, 4, 2, 4, 3, 5, 5,…
+$ returned            &lt;chr&gt; "Yes", "No", "No", "No", "No", "Yes", "No", "No", …</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Rows: 1000 Columns: 16
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: ","
+chr  (11): order_id, customer_id, customer_segment, customer_type, region, c...
+dbl   (4): quantity, unit_price, discount_pct, shipping_days
+date  (1): order_date
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 1,000
+Columns: 16
+$ order_id            &lt;chr&gt; "O2025001", "O2025002", "O2025003", "O2025004", "O…
+$ order_date          &lt;date&gt; 2025-04-25, 2025-12-26, 2025-11-06, 2025-10-09, 2…
+$ customer_id         &lt;chr&gt; "C1198", "C1212", "C1096", "C1160", "C1063", "C109…
+$ customer_segment    &lt;chr&gt; "Consumer", "Corporate", "Consumer", "Consumer", "…
+$ customer_type       &lt;chr&gt; "VIP", "New", "Returning", "New", "Returning", "Re…
+$ region              &lt;chr&gt; "South", "South", "North", "East", "East", "West",…
+$ city                &lt;chr&gt; "Helsingborg", "Malmo", "Uppsala", "Orebro", "Link…
+$ product_category    &lt;chr&gt; "Beauty", "Fashion", "Sports", "Fashion", "Beauty"…
+$ product_subcategory &lt;chr&gt; "Skincare", "Sportswear", "Fitness", "Shoes", "Ski…
+$ payment_method      &lt;chr&gt; "Card", NA, "PayPal", "PayPal", "Invoice", "Card",…
+$ campaign_source     &lt;chr&gt; "Organic", "Organic", "Organic", "Affiliate", "Pai…
+$ quantity            &lt;dbl&gt; 4, 1, 1, 1, 2, 3, 1, 1, 4, 2, 1, 1, 1, 1, 1, 1, 2,…
+$ unit_price          &lt;dbl&gt; 33.90, 91.08, 190.22, 144.56, 52.01, 120.84, 97.55…
+$ discount_pct        &lt;dbl&gt; 0.182, 0.013, 0.000, 0.042, 0.091, NA, 0.055, 0.12…
+$ shipping_days       &lt;dbl&gt; 3, 2, 3, 5, 4, 4, 1, 5, 3, 5, 2, 4, 2, 4, 3, 5, 5,…
+$ returned            &lt;chr&gt; "Yes", "No", "No", "No", "No", "Yes", "No", "No", …
+# A tibble: 5 × 6
+  product_category total_forsaljning medel_ordervarde median_ordervarde antal
+  &lt;chr&gt;                        &lt;dbl&gt;            &lt;dbl&gt;             &lt;dbl&gt; &lt;int&gt;
+1 Electronics                155811.            641.              450.    243
+2 Home                        60569.            293.              143.    207
+3 Sports                      54312.            348.              219.    156
+4 Fashion                     32207.            137.              102.    235
+5 Beauty                      12156.             76.5              62.9   159
+  andel_forsaljning
+              &lt;dbl&gt;
+1            0.495 
+2            0.192 
+3            0.172 
+4            0.102 
+5            0.0386
+# A tibble: 2 × 5
+  returned antal medel_leveranstid median_leveranstid sd_leveranstid
+  &lt;lgl&gt;    &lt;int&gt;             &lt;dbl&gt;              &lt;dbl&gt;          &lt;dbl&gt;
+1 FALSE      856              3.56                  4           1.46
+2 TRUE       144              3.98                  4           1.57</code></pre>
+</div>
+</div>
+</section>
+<section id="dataförståelse" class="level1" data-number="5">
+<h1 data-number="5"><span class="header-section-number">5</span> Dataförståelse</h1>
+<p>Datasetet innehåller orderdata från företaget information om produkter, kunder, leveranser och returer.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(raw_data)</span></code></pre></div><button title="Kopiera till urklipp" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 1000   16</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(raw_data)</span></code></pre></div><button title="Kopiera till urklipp" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 1,000
+Columns: 16
+$ order_id            &lt;chr&gt; "O2025001", "O2025002", "O2025003", "O2025004", "O…
+$ order_date          &lt;date&gt; 2025-04-25, 2025-12-26, 2025-11-06, 2025-10-09, 2…
+$ customer_id         &lt;chr&gt; "C1198", "C1212", "C1096", "C1160", "C1063", "C109…
+$ customer_segment    &lt;chr&gt; "Consumer", "Corporate", "Consumer", "Consumer", "…
+$ customer_type       &lt;chr&gt; "VIP", "New", "Returning", "New", "Returning", "Re…
+$ region              &lt;chr&gt; "South", "South", "North", "East", "East", "West",…
+$ city                &lt;chr&gt; "Helsingborg", "Malmo", "Uppsala", "Orebro", "Link…
+$ product_category    &lt;chr&gt; "Beauty", "Fashion", "Sports", "Fashion", "Beauty"…
+$ product_subcategory &lt;chr&gt; "Skincare", "Sportswear", "Fitness", "Shoes", "Ski…
+$ payment_method      &lt;chr&gt; "Card", NA, "Paypal", "Paypal", "Invoice", "Card",…
+$ campaign_source     &lt;chr&gt; "Organic", "Organic", "Organic", "Affiliate", "Pai…
+$ quantity            &lt;dbl&gt; 4, 1, 1, 1, 2, 3, 1, 1, 4, 2, 1, 1, 1, 1, 1, 1, 2,…
+$ unit_price          &lt;dbl&gt; 33.90, 91.08, 190.22, 144.56, 52.01, 120.84, 97.55…
+$ discount_pct        &lt;dbl&gt; 0.182, 0.013, 0.000, 0.042, 0.091, NA, 0.055, 0.12…
+$ shipping_days       &lt;dbl&gt; 3, 2, 3, 5, 4, 4, 1, 5, 3, 5, 2, 4, 2, 4, 3, 5, 5,…
+$ returned            &lt;chr&gt; "Yes", "No", "No", "No", "No", "Yes", "No", "No", …</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(raw_data)</span></code></pre></div><button title="Kopiera till urklipp" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   order_id           order_date         customer_id        customer_segment  
+ Length:1000        Min.   :2025-01-01   Length:1000        Length:1000       
+ Class :character   1st Qu.:2025-04-04   Class :character   Class :character  
+ Mode  :character   Median :2025-07-01   Mode  :character   Mode  :character  
+                    Mean   :2025-06-30                                        
+                    3rd Qu.:2025-09-26                                        
+                    Max.   :2025-12-31                                        
+                                                                              
+ customer_type         region              city           product_category  
+ Length:1000        Length:1000        Length:1000        Length:1000       
+ Class :character   Class :character   Class :character   Class :character  
+ Mode  :character   Mode  :character   Mode  :character   Mode  :character  
+                                                                            
+                                                                            
+                                                                            
+                                                                            
+ product_subcategory payment_method     campaign_source       quantity    
+ Length:1000         Length:1000        Length:1000        Min.   :1.000  
+ Class :character    Class :character   Class :character   1st Qu.:1.000  
+ Mode  :character    Mode  :character   Mode  :character   Median :1.000  
+                                                           Mean   :1.362  
+                                                           3rd Qu.:2.000  
+                                                           Max.   :4.000  
+                                                                          
+   unit_price       discount_pct     shipping_days     returned        
+ Min.   :   8.00   Min.   :0.00000   Min.   :1.000   Length:1000       
+ 1st Qu.:  73.27   1st Qu.:0.03000   1st Qu.:3.000   Class :character  
+ Median : 129.28   Median :0.06400   Median :4.000   Mode  :character  
+ Mean   : 258.30   Mean   :0.07067   Mean   :3.609                     
+ 3rd Qu.: 313.15   3rd Qu.:0.10300   3rd Qu.:5.000                     
+ Max.   :1625.78   Max.   :0.30600   Max.   :8.000                     
+                   NA's   :27        NA's   :22                        </code></pre>
+</div>
+</div>
+<p>Datasetet innehåller både numeriska och kategoriska variabler, vilket påverkar hur datan behöver bearbetas.</p>
+<section id="saknade-värden" class="level2" data-number="5.1">
+<h2 data-number="5.1" class="anchored" data-anchor-id="saknade-värden"><span class="header-section-number">5.1</span> Saknade värden</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">colSums</span>(<span class="fu">is.na</span>(raw_data))</span></code></pre></div><button title="Kopiera till urklipp" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>           order_id          order_date         customer_id    customer_segment 
+                  0                   0                   0                   0 
+      customer_type              region                city    product_category 
+                  0                   0                  21                   0 
+product_subcategory      payment_method     campaign_source            quantity 
+                  0                  25                  31                   0 
+         unit_price        discount_pct       shipping_days            returned 
+                  0                  27                  22                   0 </code></pre>
+</div>
+</div>
+<p>Det finns vissa saknade värden i den råa datan. Dessa hanterades i datastädningssteget med funktioner som till exempel medianimputering för numeriska variabler och standardvärden för vissa textvariabler.</p>
+</section>
+</section>
+<section id="datastädning-och-förberedelse" class="level1" data-number="6">
+<h1 data-number="6"><span class="header-section-number">6</span> Datastädning och förberedelse</h1>
+<p>Inför analysen städades alla relevant variabler och flera nya skapades för att underlätta tolkning och själva analysen.</p>
+<p>Det viktigaste förberedelserna var:<br>
+- textvärden standardiserades<br>
+- datum omvandlades till datumformat<br>
+- saknade värden hanterades<br>
+- nya variabler skapades<br>
+Det nya variablerna är:<br>
+- order_value : ordervärde efter rabatt<br>
+- shipping_group : grupperad leveranstid<br>
+- discount_group : grupperad rabattnivå</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(sales_clean)</span></code></pre></div><button title="Kopiera till urklipp" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 1,000
+Columns: 13
+$ product_category &lt;chr&gt; "Beauty", "Fashion", "Sports", "Fashion", "Beauty", "…
+$ city             &lt;chr&gt; "Helsingborg", "Malmö", "Uppsala", "Orebro", "Linkopi…
+$ quantity         &lt;int&gt; 4, 1, 1, 1, 2, 3, 1, 1, 4, 2, 1, 1, 1, 1, 1, 1, 2, 1,…
+$ unit_price       &lt;dbl&gt; 33.90, 91.08, 190.22, 144.56, 52.01, 120.84, 97.55, 1…
+$ discount_pct     &lt;dbl&gt; 0.182, 0.013, 0.000, 0.042, 0.091, 0.000, 0.055, 0.12…
+$ shipping_days    &lt;dbl&gt; 3, 2, 3, 5, 4, 4, 1, 5, 3, 5, 2, 4, 2, 4, 3, 5, 5, 3,…
+$ returned         &lt;lgl&gt; TRUE, FALSE, FALSE, FALSE, FALSE, TRUE, FALSE, FALSE,…
+$ customer_segment &lt;chr&gt; "Consumer", "Corporate", "Consumer", "Consumer", "Con…
+$ customer_type    &lt;chr&gt; "VIP", "New", "Returning", "New", "Returning", "Retur…
+$ order_date       &lt;date&gt; 2025-04-25, 2025-12-26, 2025-11-06, 2025-10-09, 2025…
+$ order_value      &lt;dbl&gt; 110.92080, 89.89596, 190.22000, 138.48848, 94.55418, …
+$ shipping_group   &lt;chr&gt; "Snabb", "Snabb", "Snabb", "Medel", "Medel", "Medel",…
+$ discount_group   &lt;chr&gt; "Låg", "Låg", "Ingen", "Låg", "Låg", "Ingen", "Låg", …</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">colSums</span>(<span class="fu">is.na</span>(sales_clean))</span></code></pre></div><button title="Kopiera till urklipp" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>product_category             city         quantity       unit_price 
+               0                0                0                0 
+    discount_pct    shipping_days         returned customer_segment 
+               0                0                0                0 
+   customer_type       order_date      order_value   shipping_group 
+               0                0                0                0 
+  discount_group 
+               0 </code></pre>
+</div>
+</div>
+<section id="resultat-och-tolkning" class="level2" data-number="6.1">
+<h2 data-number="6.1" class="anchored" data-anchor-id="resultat-och-tolkning"><span class="header-section-number">6.1</span> Resultat och Tolkning</h2>
+<ol type="1">
+<li>Vilka produktkategorier verkar driva högst försäljning? För att besvara denna fråga summerades total försäljning per produktkategori, samt medel/median-värde för ordervärde</li>
+</ol>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>sales_category</span></code></pre></div><button title="Kopiera till urklipp" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 5 × 6
+  product_category total_forsaljning medel_ordervarde median_ordervarde antal
+  &lt;chr&gt;                        &lt;dbl&gt;            &lt;dbl&gt;             &lt;dbl&gt; &lt;int&gt;
+1 Electronics                155811.            641.              450.    243
+2 Home                        60569.            293.              143.    207
+3 Sports                      54312.            348.              219.    156
+4 Fashion                     32207.            137.              102.    235
+5 Beauty                      12156.             76.5              62.9   159
+# ℹ 1 more variable: andel_forsaljning &lt;dbl&gt;</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(sales_category, <span class="fu">aes</span>(</span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">x =</span> <span class="fu">reorder</span>(product_category, total_forsaljning),</span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">y =</span> total_forsaljning</span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>)) <span class="sc">+</span> </span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">fill =</span> <span class="st">"lightgreen"</span>) <span class="sc">+</span> </span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_flip</span>() <span class="sc">+</span></span>
+<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">labels =</span> scales<span class="sc">::</span>comma) <span class="sc">+</span></span>
+<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb35-9"><a href="#cb35-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Total försäljning per produktkategori"</span>,</span>
+<span id="cb35-10"><a href="#cb35-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Produktkategori"</span>,</span>
+<span id="cb35-11"><a href="#cb35-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Total försäljning"</span></span>
+<span id="cb35-12"><a href="#cb35-12" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Kopiera till urklipp" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Grupp1_Report_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<section id="tolkning" class="level3" data-number="6.1.1">
+<h3 data-number="6.1.1" class="anchored" data-anchor-id="tolkning"><span class="header-section-number">6.1.1</span> Tolkning</h3>
+<p>Figuren visar tydligt att Electronics står för den klart högsta totala försäljningen. Home och Sports ligger efter men bidrar ändå tydligt. Fashion och Beauty ligger betydligt lägre.</p>
+<p>Detta tyder på att Electronics är företagets viktigaste försäljningsdrivare. För företaget är detta relevant i beslut om sortiment, lager och marknadsförings planer. Det kategorier som ligger lägre kan antingen ha lägre efterfrågan eller vara områden där företaget har utvecklingspotential.</p>
+<ol start="2" type="1">
+<li>Finns det tecken på att längre leveranstid hänger ihop med fler returer?<br>
+För att undersöka detta jämfördes leveranstid mellan returnerade och icke returnerade beställningar, både genom sammanfattande statistik och genom visualisering.</li>
+</ol>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>shipping_return</span></code></pre></div><button title="Kopiera till urklipp" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 5
+  returned antal medel_leveranstid median_leveranstid sd_leveranstid
+  &lt;lgl&gt;    &lt;int&gt;             &lt;dbl&gt;              &lt;dbl&gt;          &lt;dbl&gt;
+1 FALSE      856              3.56                  4           1.46
+2 TRUE       144              3.98                  4           1.57</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>shipping_return_test</span></code></pre></div><button title="Kopiera till urklipp" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    Welch Two Sample t-test
+
+data:  shipping_days by returned
+t = -3.0195, df = 187.04, p-value = 0.002886
+alternative hypothesis: true difference in means between group FALSE and group TRUE is not equal to 0
+95 percent confidence interval:
+ -0.6975791 -0.1462683
+sample estimates:
+mean in group FALSE  mean in group TRUE 
+           3.557243            3.979167 </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(sales_clean, <span class="fu">aes</span>(</span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">x =</span> returned,</span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">y =</span> shipping_days,</span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">fill =</span> returned</span>
+<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a>)) <span class="sc">+</span></span>
+<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>() <span class="sc">+</span> </span>
+<span id="cb40-7"><a href="#cb40-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_brewer</span>(<span class="at">palette =</span> <span class="st">"Set2"</span>) <span class="sc">+</span> </span>
+<span id="cb40-8"><a href="#cb40-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb40-9"><a href="#cb40-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Leveranstid för returnerade vs icke returnerade beställningar"</span>,</span>
+<span id="cb40-10"><a href="#cb40-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Returnerad (TRUE = ja, FALSE = nej)"</span>,</span>
+<span id="cb40-11"><a href="#cb40-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Leveranstid (dagar)"</span></span>
+<span id="cb40-12"><a href="#cb40-12" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Kopiera till urklipp" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Grupp1_Report_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="tolkning-1" class="level3" data-number="6.1.2">
+<h3 data-number="6.1.2" class="anchored" data-anchor-id="tolkning-1"><span class="header-section-number">6.1.2</span> Tolkning</h3>
+<p>Den visuella skillnaden mellan grupperna är inte speciellt stor, men den statistiska analysen visar att returnerade beställningar i genomsnitt verkar ha något längre leveranstid än beställningar som inte returneras. Det finns alltså tecken på ett samband mellan längre leveranstid och fler returer. Samtidigt bör resultatet tolkas försiktigt. Analysen visar ett samband, men inte att leveranstid i sig orsakar returer. Andra faktorer som till exempel produktkategori eller kundförväntningar kan också spela roll.</p>
+<ol start="3" type="1">
+<li>Hur skiljer sig kundtyper mellan olika kundsegment?<br>
+Här analyserades hur kundtyperna New, Returning och VIP fördelar sig inom olika segment.</li>
+</ol>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>tabell_segment_typ</span></code></pre></div><button title="Kopiera till urklipp" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 9 × 8
+  customer_segment customer_type total_forsaljning medel_ordervarde antal_kop
+  &lt;fct&gt;            &lt;chr&gt;                     &lt;dbl&gt;            &lt;dbl&gt;     &lt;int&gt;
+1 Consumer         Returning                89212.             320.       279
+2 Consumer         New                      46103.             342.       135
+3 Consumer         VIP                      35365.             308.       115
+4 Small Business   Returning                75033.             328.       229
+5 Small Business   New                      27077.             451.        60
+6 Small Business   VIP                       2449.             188.        13
+7 Corporate        Returning                26370.             251.       105
+8 Corporate        New                      10863.             217.        50
+9 Corporate        VIP                       2584.             185.        14
+# ℹ 3 more variables: segment_total &lt;dbl&gt;, andel_inom_segment &lt;dbl&gt;,
+#   andel_total &lt;dbl&gt;</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(tabell_segment_typ, <span class="fu">aes</span>(</span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">x =</span> customer_segment,</span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">y =</span> andel_inom_segment,</span>
+<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">fill =</span> customer_type</span>
+<span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a>)) <span class="sc">+</span></span>
+<span id="cb43-6"><a href="#cb43-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">position =</span> <span class="st">"fill"</span>) <span class="sc">+</span></span>
+<span id="cb43-7"><a href="#cb43-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">labels =</span> scales<span class="sc">::</span>percent) <span class="sc">+</span></span>
+<span id="cb43-8"><a href="#cb43-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_brewer</span>(<span class="at">palette =</span> <span class="st">"Dark2"</span>) <span class="sc">+</span></span>
+<span id="cb43-9"><a href="#cb43-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb43-10"><a href="#cb43-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Fördelning av kundtyper inom kundsegment"</span>,</span>
+<span id="cb43-11"><a href="#cb43-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Kundsegment"</span>,</span>
+<span id="cb43-12"><a href="#cb43-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Andel"</span>,</span>
+<span id="cb43-13"><a href="#cb43-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">fill =</span> <span class="st">"Kundtyp"</span></span>
+<span id="cb43-14"><a href="#cb43-14" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb43-15"><a href="#cb43-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">45</span>, <span class="at">hjust =</span> <span class="dv">1</span>))</span></code></pre></div><button title="Kopiera till urklipp" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Grupp1_Report_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="tolkning-2" class="level3" data-number="6.1.3">
+<h3 data-number="6.1.3" class="anchored" data-anchor-id="tolkning-2"><span class="header-section-number">6.1.3</span> Tolkning</h3>
+<p>Resultatet visar att kundtypen Returning dominerar inom alla kundsegment. Segmentet Consumer har en tydligt högre andel VIP-kunder än övriga segment, vilket tyder på högre kundlojalitet i detta segment.</p>
+</section>
+</section>
+</section>
+<section id="sammanfattande-slutsatser" class="level1" data-number="7">
+<h1 data-number="7"><span class="header-section-number">7</span> Sammanfattande slutsatser</h1>
+<p>Utifrån analysen kan vi dra följande tydliga slutsatser kopplade till våra frågeställningar:</p>
+<p>- Electronics är den viktigaste produktkategorin för företagets inkomst och bör prioriteras strategiskt. Samtidigt är kategorier som Beauty och Fashion betydligt mindre, vilket kan tyda på lägre efterfrågan eller potential för tillväxt genom exempelvis mer marknadsföring eller bättre prissättning på dessa produkter.<br>
+- Det finns tecken på samband mellan längre leveranstid och högre returbenägenhet. Våra statistiska tester visar att skillnaden i genomsnittlig leveranstid mellan returnerade och icke returnerade beställningar är statiskt signifikant. Även om skillnaden inte är särskilt stor i praktiken tyder det på att längre leveranstider kan påverka kundnöjdhet och därmed öka sannolikheten för retur.<br>
+- Sist så visar analysen av kundsegment att kundtyperna är olika fördelade mellan det olika segmenten. Returning kunder dominerar i samtliga segment, vilket tyder på att företaget har en stabil bas av återkommande kunder. Samtidigt har Consumer segmentet en relativt högre andel VIP-kunder, vilket indikerar högre lojalitet och/eller större köpvolym inom just detta segment.</p>
+<p>De mest användbara resultaten för företaget är därför:<br>
+- Att förstå vilka kategorier som driver försäljningen och varför<br>
+- Undersöka ifall leveranstid är en möjlig faktor bakom antalet returer och hur företaget kan undvika detta<br>
+- Kundsegment har olika beteendemönster och kan kräva olika strategier beroende på kundtyp</p>
+</section>
+<section id="begränsningar" class="level1" data-number="8">
+<h1 data-number="8"><span class="header-section-number">8</span> Begränsningar</h1>
+<p>Det finns flera begränsningar i datan och analysen som är viktiga att ta hänsyn till.</p>
+<p>Först så är datasetet relativt begränsat i storlek och omfattning. Detta innebär att resultaten kanske inte representerar alla kundbeteenden eller variationer över tid helt fullt.</p>
+<p>För det andra har vissa saknade värden hanteras genom imputering, till exempel genom att ersätta värden med median eller standardvärden. Även om detta är en rimlig metod kan det påverka precisionen i analysen.</p>
+<p>Samt så analyserar vi främst samband mellan variabler, inte sambandet mellan orsakerna. Som exempel kan vi se att längre leveranstid hänger ihop med fler returer, men vi kan inte med hög säkerhet säga att leveranstiden är huvudorsaken til detta utan vidare analys. Något som yttligare hade hjälpt här hade varit flera variabler som kanske tidigare köpbeteende eller kundnöjdhet.</p>
+<p>Sammanfattningsvis innebär detta att resultaten bör tolkas som indikationer snarare än exakta sanningar och att vidare analys behövs för att bekräfta slutsatserna.</p>
+</section>
+<section id="nästa-steg" class="level1" data-number="9">
+<h1 data-number="9"><span class="header-section-number">9</span> Nästa Steg</h1>
+<p>Baserat på analysen och resultaten finns det fleratal nästa steg för företaget:</p>
+<ul>
+<li>Analysera varför Electronics driver majoriteten av försäljningen och komma fram till hur mindre kategorier kan utvecklas för att uppnå liknande resultat</li>
+<li>Undersöka ifall snabbare leveranser faktiskt minskar returgraden i praktiken</li>
+<li>Arbeta mer riktat mot underrepresenterade kundsegment. Till exempel kan VIP-kunder kanske få särskilda erbjudanden och nya kunder få fler incitament att återkomma ooch bli Returning kunder</li>
+</ul>
+<p>Sist så skulle företaget kunna arbeta vidare med mer avancderad analys som till exempel prediktiva modeller för att förutsäga returer eller olika kundbeteenden. Detta skulle kunna ge ännu mer värdefulla insikter och stödja beslut enklare.</p>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Kopierat!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Kopierat!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
