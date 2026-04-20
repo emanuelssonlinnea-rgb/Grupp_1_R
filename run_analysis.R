@@ -1,0 +1,5 @@
+source("Grupp_1_Dataförståelse.R")
+source("data_städning_förberedesle.R")
+source("Statistiska_sammanfattningar.R")
+source("Gruppuppgift_Visualisering.R")
+source("Report/Grupp_1_Report.qmd")
